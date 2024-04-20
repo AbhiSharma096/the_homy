@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_homy/component/color.dart';
 import 'package:the_homy/pages/homepage.dart';
+import 'package:the_homy/pages/login_page.dart';
+import 'package:the_homy/pages/navigation_menu.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+  final Function()? onTap;
+  const SignupPage({super.key, this.onTap});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -51,21 +55,22 @@ class _SignupPageState extends State<SignupPage> {
                 const Center(
                   child: Text(
                     'Register Account',
-                    style: TextStyle(fontSize: 42),
+                    style: TextStyle(fontSize: 42,fontFamily: 'Poppins'),
                   ),
                 ),
                 const SizedBox(
-                  height: 14,
+                  height: 10,
                 ),
                 Container(
                   padding:
-                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 30.0),
+                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextFormField(
+                    cursorColor: Colors.red.shade400,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please Enter Name';
@@ -83,16 +88,17 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20.0),
+                const SizedBox(height: 14.0),
                 Container(
                   padding:
-                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 30.0),
+                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextFormField(
+                    cursorColor: Colors.red.shade400,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please Enter Phone Number';
@@ -111,16 +117,17 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20.0),
+                const SizedBox(height: 14.0),
                 Container(
                   padding:
-                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 30.0),
+                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextFormField(
+                    cursorColor: Colors.red.shade400,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please Enter Email';
@@ -139,16 +146,17 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20.0),
+                const SizedBox(height: 14.0),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 2.0, horizontal: 30.0),
+                      vertical: 2.0, horizontal: 20.0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextFormField(
+                    cursorColor: Colors.red.shade400,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please Enter Address';
@@ -167,7 +175,7 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 14,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -182,6 +190,7 @@ class _SignupPageState extends State<SignupPage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextFormField(
+                          cursorColor: Colors.red.shade400,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please Enter City';
@@ -211,6 +220,7 @@ class _SignupPageState extends State<SignupPage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextFormField(
+                          cursorColor: Colors.red.shade400,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please Enter Pincode';
@@ -231,16 +241,17 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20.0),
+                const SizedBox(height: 14.0),
                 Container(
                   padding:
-                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 30.0),
+                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextFormField(
+                    cursorColor: Colors.red.shade400,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please Enter Address';
@@ -305,13 +316,18 @@ class _SignupPageState extends State<SignupPage> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HomePage()));
+                                builder: (context) => NavigationMenu()));
                       },
                       child: const Text(
                         "SIGN UP",
                         style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                       )),
-                )
+                ),
+                SizedBox(height: 20,),
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Text('Already have an account? '),SizedBox(width: 12,),GestureDetector(onTap: widget.onTap, child: Text('Login',style: TextStyle(color: Colors.red.shade300),))],),),
               ],
             ),
           ),

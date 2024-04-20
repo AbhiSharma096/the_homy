@@ -1,11 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:the_homy/component/combo_tile.dart';
-import 'package:the_homy/onboarding.dart/onboarding_view.dart';
-import 'package:the_homy/pages/service_page.dart';
+import 'package:the_homy/pages/service_page2.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,10 +13,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Color backgroundColor = Color(0xFFFFF7F7);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
+        backgroundColor: backgroundColor,
         actions: const [
           Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -32,30 +34,31 @@ class _HomePageState extends State<HomePage> {
                 ],
               ))
         ],
-        title: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: Row(
             children: [
-              Icon(
-                Icons.image,
-                size: 60,
-              ),
               SizedBox(
+                height: 50,
+                width: 50,
+                child: Image.asset('lib/assets/user_pic.png'),
+              ),
+              const SizedBox(
                 width: 20,
               ),
-              Column(
+              const Column(
                 children: [
                   Text(
                     'welcome',
-                    style: TextStyle(fontSize: 12),
+                    style: TextStyle(fontSize: 10, fontFamily: 'Poppins'),
                   ),
                   Text(
                     'Abhishek Sharma',
-                    style: TextStyle(fontSize: 12),
+                    style: TextStyle(fontSize: 13, fontFamily: 'Poppins'),
                   ),
                   Text(
                     'Location',
-                    style: TextStyle(fontSize: 12),
+                    style: TextStyle(fontSize: 10, fontFamily: 'Poppins'),
                   )
                 ],
               )
@@ -70,155 +73,171 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                // Banner 
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    height: 180,
-                    width: 450,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        'lib/assets/cheff.jpg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                // Banner
+                GestureDetector(
+                  onTap: () {},
+                  child: Material(
+                    borderRadius: BorderRadius.circular(18),
+                    elevation: 8,
+                    child: Image.asset('lib/assets/banner.png'),
                   ),
                 ),
-                // Services text
                 const SizedBox(
                   height: 16,
                 ),
-                const SizedBox(
-                    width: 450,
-                    child: Text(
-                      'Our Services',
-                      textAlign: TextAlign.left,
-                    )),
-                const SizedBox(
-                  height: 10,
+                Container(
+                  padding: const EdgeInsets.only(
+                      left: 12, right: 12, top: 8, bottom: 6),
+                  alignment: Alignment.centerLeft,
+                  child: const Text(
+                    'Our Services',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontFamily: 'Poppins', fontSize: 18),
+                  ),
                 ),
-                
+
                 // Services container
-                
-                Padding(
-                  padding: const EdgeInsets.only(left: 20,right: 20,top: 12),
-                  child: GestureDetector(
-                    onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=> ServicesPage())),
-                    child: Material(
-                      borderRadius: BorderRadius.circular(8),
-                      elevation: 12,
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ServicesPage2())),
                       child: Container(
-                        
-                        decoration: BoxDecoration(
-                            color: Colors.red[50],
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: HexColor('#E23744'),
-                            )),
-                        child:  Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Stack(
                           children: [
-                            Row(
-                              children: [
-                                Padding(
-                                    padding: const EdgeInsets.all(12),
-                                    child: Image.asset('lib/assets/kitchen_king.png')),
-                                const Column(
-                                  children: [
-                                    Text(
-                                      'Kitchen King',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    Text('Cooking')
-                                  ],
-                                )
-                              ],
+                            Material(
+                              elevation: 8,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                height: 148,
+                                padding: EdgeInsets.all(12),
+                                width: 136,
+                                child: Transform.rotate(
+                                  angle: -1.5708,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Kitchen King',
+                                        style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 18,
+                                            color: Colors.red.shade400,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text('Cooking',
+                                          style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 10,
+                                              color: Colors.red.shade400))
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
-                            const Padding(
-                                padding: EdgeInsets.all(12), child: Icon(Icons.menu))
+                            Container(
+                                height: 180,
+                                width: 155,
+                                alignment: Alignment.bottomRight,
+                                child:
+                                    Image.asset('lib/assets/cheff_doodle.png'))
                           ],
                         ),
                       ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 20,right: 20,top: 12),
-                  child: Material(
-                    elevation: 12,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(                      
-                      decoration: BoxDecoration(
-                          color: Colors.red[50],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: HexColor('#E23744'),
-                          )),
-                      child:  Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child:Image.asset('lib/assets/dust_master.png')),
-                              const Column(
-                                children: [
-                                  Text(
-                                    'Dust Guard',
-                                    style: TextStyle(fontSize: 16),
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ServicesPage2())),
+                      child: Container(
+                        child: Stack(
+                          children: [
+                            Material(
+                              elevation: 8,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                height: 148,
+                                padding: EdgeInsets.all(12),
+                                width: 136,
+                                child: Transform.rotate(
+                                  angle: -1.5708,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Dust Guard',
+                                        style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 18,
+                                            color: Colors.red.shade400,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text('Comming soon',
+                                          style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 10,
+                                              color: Colors.red.shade400))
+                                    ],
                                   ),
-                                  Text('House Cleaning'),
-                                  Text('Comming soon',style: TextStyle(fontSize: 10,color: Colors.grey),)
-                                ],
-                              )
-                            ],
-                          ),
-                          const Padding(
-                              padding: EdgeInsets.all(12), child: Icon(Icons.menu))
-                        ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              height: 180,
+                              width: 145,
+                              alignment: Alignment.bottomRight,
+                              child: Image.asset(
+                                  'lib/assets/dust_guard_doodle.png'),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                
-                
-                const SizedBox(
-                  height: 20,
-                ),
-                const SizedBox(
-                  width: 450,
-                  child: Text(
+
+                Container(
+                  padding: const EdgeInsets.only(
+                      left: 12, right: 12, top: 8, bottom: 0),
+                  alignment: Alignment.centerLeft,
+                  child: const Text(
                     'Combos',
                     textAlign: TextAlign.left,
+                    style: TextStyle(fontFamily: 'Poppins', fontSize: 18),
                   ),
                 ),
-                const SizedBox(height: 12,),
 
                 // Combos list
                 const SingleChildScrollView(
+                  padding: EdgeInsets.all(14),
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      MyComboTile(comboName: 'KitchenKing',comboDescription: "Cook + Once a week ",price: 9999,),
-                      SizedBox(
-                        width: 30,
+                      MyComboTile(
+                        comboName: 'Kitchen King',
+                        comboDescription:
+                            "Cook + Once a week toilet cleaner + full house cleaning",
+                        price: 9999,
                       ),
-                      MyComboTile(comboName: 'Kitchen King',comboDescription: "Cook + Once a week ",price: 9999,),
                       SizedBox(
-                        width: 30,
+                        width: 20,
                       ),
-                      MyComboTile(comboName: 'KitchenKing',comboDescription: "Cook + Once a week ",price: 9999,)
+                      MyComboTile(
+                        comboName: 'Dust Guard',
+                        comboDescription:
+                            "Cook + Once a week toilet cleaner + full house cleaning",
+                        price: 9999,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
                     ],
                   ),
                 ),

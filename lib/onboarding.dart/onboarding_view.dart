@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:the_homy/auth/login_or_signup.dart';
 import 'package:the_homy/component/color.dart';
 import 'package:the_homy/onboarding.dart/onboarding_items.dart';
 import 'package:the_homy/pages/signup_page.dart';
@@ -105,7 +106,7 @@ class _OnboardingViewState extends State<OnboardingView> {
             //After we press get started button this onboarding value become true
             // same key
             if(!mounted)return;
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SignupPage()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginOrSignupPage()));
           },
           child: const Text("Get started",style: TextStyle(color: Colors.white),)),
     );
