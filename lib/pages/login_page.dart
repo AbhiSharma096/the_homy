@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:the_homy/component/back_button.dart';
 import 'package:the_homy/component/color.dart';
 import 'package:the_homy/pages/homepage.dart';
+import 'package:the_homy/pages/navigation_menu.dart';
 
 class LoginPage extends StatefulWidget {
   final Function() onTap;
@@ -105,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomePage()));
+                                  builder: (context) => NavigationMenu()));
                         },
                         child: const Text(
                           "Login",

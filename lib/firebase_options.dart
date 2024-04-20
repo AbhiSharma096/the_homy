@@ -74,4 +74,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'thehomy-d4fb8.appspot.com',
     iosBundleId: 'com.example.theHomy',
   );
+
 }

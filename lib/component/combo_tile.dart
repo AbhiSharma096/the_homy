@@ -22,7 +22,6 @@ class MyComboTile extends StatelessWidget {
         width: 200,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          
           children: [
             Padding(
               padding: EdgeInsets.all(10),
@@ -39,14 +38,49 @@ class MyComboTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
-                children: [SizedBox(width: 25,height:25,child: Image.asset('lib/assets/kitchen_king.png',)), const SizedBox(width: 10,),Text(comboName,style: TextStyle(fontFamily: 'Montserrat',color: Colors.red.shade400,fontWeight: FontWeight.bold,fontSize: 16),)],
+                children: [
+                  SizedBox(
+                      width: 25,
+                      height: 25,
+                      child: Image.asset(
+                        'lib/assets/kitchen_king.png',
+                      )),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    comboName,
+                    style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        color: Colors.red.shade400,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  )
+                ],
               ),
             ),
-            SizedBox(height: 4,),
+            SizedBox(
+              height: 4,
+            ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),child : Text(comboDescription,style: const TextStyle(fontFamily: 'Poppins',fontSize: 10),)),
-              SizedBox(height: 6,),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 12),child: Text('only @${price}',style: TextStyle(fontSize: 20,fontFamily: 'Poly',color: Colors.red.shade400),),)
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  comboDescription,
+                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 10),
+                )),
+            SizedBox(
+              height: 6,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                'only @${price}',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Poly',
+                    color: Colors.red.shade400),
+              ),
+            )
           ],
         ),
       ),
