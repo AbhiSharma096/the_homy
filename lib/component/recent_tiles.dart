@@ -1,15 +1,26 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:the_homy/pages/cart_page.dart';
 
 class RecentTile extends StatefulWidget {
-  const RecentTile({super.key});
+  final VoidCallback? OnTap;
+  const RecentTile({super.key, this.OnTap});
 
   @override
   State<RecentTile> createState() => _RecentTileState();
 }
 
+ 
+
 class _RecentTileState extends State<RecentTile> {
+  void openCart(){
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartPage(),
+      ));
+}
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -89,7 +100,9 @@ class _RecentTileState extends State<RecentTile> {
                           ],
                         )
                       ]),
-                      SizedBox(height: 12,),
+                  SizedBox(
+                    height: 12,
+                  ),
                   Row(
                     children: [
                       SizedBox(
@@ -112,7 +125,9 @@ class _RecentTileState extends State<RecentTile> {
                       )
                     ],
                   ),
-                  SizedBox(height: 12,),
+                  SizedBox(
+                    height: 12,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
@@ -134,7 +149,9 @@ class _RecentTileState extends State<RecentTile> {
                           )
                         ],
                       ),
-                      SizedBox(width: 20,),
+                      SizedBox(
+                        width: 20,
+                      ),
                       Column(
                         children: [
                           Text(
@@ -155,15 +172,28 @@ class _RecentTileState extends State<RecentTile> {
                       )
                     ],
                   ),
-                  SizedBox(height: 6,),
+                  SizedBox(
+                    height: 6,
+                  ),
                   Center(
-                    
-            child: GestureDetector(onTap: (){}, child: Container(
-              height: 24,width: 120,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(3), border: Border.all(color: Colors.black),color: Colors.red.shade400),
-              child: Center(child: Text('Book Again',style: TextStyle(color: Colors.white),),),
-            ),),
-          )
+                    child: GestureDetector(
+                      onTap: openCart,
+                      child: Container(
+                        height: 24,
+                        width: 120,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(3),
+                            border: Border.all(color: Colors.black),
+                            color: Colors.red.shade400),
+                        child: Center(
+                          child: Text(
+                            'Book Again',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               )
             ],
