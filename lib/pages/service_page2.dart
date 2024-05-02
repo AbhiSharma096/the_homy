@@ -5,7 +5,8 @@ import 'package:the_homy/component/my_tab_bar.dart';
 import 'package:the_homy/component/sliver_appbar.dart';
 
 class ServicesPage2 extends StatefulWidget {
-  const ServicesPage2({super.key});
+  final String available;
+  const ServicesPage2({super.key,required this.available});
 
   @override
   State<ServicesPage2> createState() => _ServicesPageState2();
@@ -14,6 +15,8 @@ class ServicesPage2 extends StatefulWidget {
 class _ServicesPageState2 extends State<ServicesPage2>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+
+  
 
   @override
   void initState() {
@@ -146,7 +149,9 @@ class _ServicesPageState2 extends State<ServicesPage2>
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: ElevatedContainer(index: index,),
+                    child: ElevatedContainer(
+                      index: index,
+                    ),
                   );
                 },
               ),
@@ -239,11 +244,23 @@ class ElevatedContainer extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Center(
-            child: GestureDetector(onTap: (){}, child: Container(
-              height: 24,width: 120,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(3), border: Border.all(color: Colors.black),color: Colors.red.shade400),
-              child: Center(child: Text('Continue',style: TextStyle(color: Colors.white),),),
-            ),),
+            child: GestureDetector(
+              onTap: () {},
+              child: Container(
+                height: 24,
+                width: 120,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3),
+                    border: Border.all(color: Colors.black),
+                    color: Colors.red.shade400),
+                child: Center(
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
           )
         ],
       ),

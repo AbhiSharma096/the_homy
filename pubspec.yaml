@@ -45,6 +45,10 @@ dependencies:
   iconsax_flutter: ^1.0.0
   get: ^4.6.6
   firebase_database: ^10.5.2
+  provider:
+  shimmer: 
+  firebase_storage:
+  carousel_slider: 
 
 dev_dependencies:
   flutter_test:

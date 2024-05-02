@@ -60,7 +60,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                   TextButton(
                       onPressed: () => pageController
                           .jumpToPage(controller.items.length - 1),
-                      child:  Text(Benefits['Banner'].toString())),
+                      child: const Text('Skip')),
 
                   //Indicator
                   SmoothPageIndicator(

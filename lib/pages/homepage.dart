@@ -1,7 +1,12 @@
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:the_homy/component/combo_tile.dart';
 import 'package:the_homy/pages/service_page2.dart';
 
@@ -14,6 +19,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Color backgroundColor = Color(0xFFFFF7F7);
+  final ref = FirebaseDatabase.instance.ref('IOS/Service/');
+  Future<List<String>> getBannerImages() async {
+    // Replace 'banners' with your Firebase Storage folder path
+    Reference ref = FirebaseStorage.instance.ref('banners');
+    ListResult result = await ref.listAll();
+    List<String> imageUrls = [];
+    for (Reference imageRef in result.items) {
+      String downloadUrl = await imageRef.getDownloadURL();
+      imageUrls.add(downloadUrl);
+    }
+    return imageUrls;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,14 +91,31 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 // Banner
-                GestureDetector(
-                  onTap: () {},
-                  child: Material(
-                    borderRadius: BorderRadius.circular(18),
-                    elevation: 8,
-                    child: Image.asset('lib/assets/banner.png'),
-                  ),
+                FutureBuilder<List<String>>(
+                  future: getBannerImages(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(); 
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return CarouselSlider(
+                        options: CarouselOptions(
+                          autoPlay: true, 
+                          aspectRatio: 16 / 9,
+                          enlargeCenterPage: true,
+                        ),
+                        items: snapshot.data?.map<Widget>((imageUrl) {
+                          return ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child:
+                                  Image.network(imageUrl, fit: BoxFit.cover));
+                        }).toList(),
+                      );
+                    }
+                  },
                 ),
+
                 const SizedBox(
                   height: 16,
                 ),
@@ -98,109 +132,91 @@ class _HomePageState extends State<HomePage> {
 
                 // Services container
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ServicesPage2())),
-                      child: Container(
-                        child: Stack(
-                          children: [
-                            Material(
-                              elevation: 8,
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                height: 148,
-                                padding: EdgeInsets.all(12),
-                                width: 136,
-                                child: Transform.rotate(
-                                  angle: -1.5708,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Kitchen King',
-                                        style: TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontSize: 18,
-                                            color: Colors.red.shade400,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text('Cooking',
+                SizedBox(
+                  height: 185,
+                  child: FirebaseAnimatedList(
+                      defaultChild: Shimmer.fromColors(
+                        baseColor: Colors.red.shade300,
+                        highlightColor: Colors.red.shade100,
+                        child: const SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              ShimmerBox(),
+                              SizedBox(width: 10),
+                              ShimmerBox(),
+                              SizedBox(width: 10),
+                              ShimmerBox(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      duration: const Duration(seconds: 5),
+                      scrollDirection: Axis.horizontal,
+                      query: ref,
+                      itemBuilder: (context, snapshot, animation, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            var available =
+                                snapshot.child('Fun').value.toString();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ServicesPage2(available: available),
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Material(
+                                elevation: 8,
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  height: 148,
+                                  padding: const EdgeInsets.all(12),
+                                  width: 136,
+                                  child: Transform.rotate(
+                                    angle: -1.5708,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          snapshot
+                                              .child('Name')
+                                              .value
+                                              .toString(),
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              fontSize: 10,
-                                              color: Colors.red.shade400))
-                                    ],
+                                              fontSize: 18,
+                                              color: Colors.red.shade400,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                            snapshot
+                                                .child('Fun')
+                                                .value
+                                                .toString(),
+                                            style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontSize: 10,
+                                                color: Colors.red.shade400))
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Container(
-                                height: 180,
-                                width: 155,
-                                alignment: Alignment.bottomRight,
-                                child:
-                                    Image.asset('lib/assets/cheff_doodle.png'))
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ServicesPage2())),
-                      child: Container(
-                        child: Stack(
-                          children: [
-                            Material(
-                              elevation: 8,
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                height: 148,
-                                padding: EdgeInsets.all(12),
-                                width: 136,
-                                child: Transform.rotate(
-                                  angle: -1.5708,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Dust Guard',
-                                        style: TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontSize: 18,
-                                            color: Colors.red.shade400,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text('Comming soon',
-                                          style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 10,
-                                              color: Colors.red.shade400))
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: 180,
-                              width: 145,
-                              alignment: Alignment.bottomRight,
-                              child: Image.asset(
-                                  'lib/assets/dust_guard_doodle.png'),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                              Container(
+                                  height: 180,
+                                  width: 155,
+                                  alignment: Alignment.bottomRight,
+                                  child: Image.asset(
+                                      'lib/assets/${snapshot.child('Img').value.toString()}.png'))
+                            ],
+                          ),
+                        );
+                      }),
                 ),
 
                 Container(
@@ -245,6 +261,22 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ShimmerBox extends StatelessWidget {
+  const ShimmerBox({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 130,
+      width: 130,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
       ),
     );
   }
