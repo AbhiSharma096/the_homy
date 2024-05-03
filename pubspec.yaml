@@ -49,6 +49,7 @@ dependencies:
   shimmer: 
   firebase_storage:
   carousel_slider: 
+  cached_network_image: ^3.3.1
 
 dev_dependencies:
   flutter_test:

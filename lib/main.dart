@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_homy/firebase_options.dart';
 import 'package:the_homy/onboarding.dart/onboarding_view.dart';
+import 'package:the_homy/pages/homepage.dart';
 import 'package:the_homy/pages/navigation_menu.dart';
 import 'package:the_homy/pages/test.dart';
 import 'package:the_homy/provider/auth_provider.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_)=> AuthProvider()),
+        ChangeNotifierProvider(create: (_)=> ServiceProvider())
         
       ],
       child: MaterialApp(
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           debugShowCheckedModeBanner: false,
-          home: const OnboardingView(),
+          home: const NavigationMenu(),
           
           ),
     );
