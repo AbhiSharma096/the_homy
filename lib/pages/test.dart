@@ -39,7 +39,7 @@ class _TestState extends State<Test> {
                       data.name,
                       style: TextStyle(fontSize: 24),
                     ),
-                    Text(data.function, style: TextStyle(fontSize: 24)),
+                    Text(data.fun, style: TextStyle(fontSize: 24)),
                   ],
                 );
               },

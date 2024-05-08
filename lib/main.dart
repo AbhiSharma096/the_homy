@@ -5,6 +5,7 @@ import 'package:the_homy/firebase_options.dart';
 import 'package:the_homy/onboarding.dart/onboarding_view.dart';
 import 'package:the_homy/pages/homepage.dart';
 import 'package:the_homy/pages/navigation_menu.dart';
+import 'package:the_homy/pages/otp_screen.dart';
 import 'package:the_homy/pages/test.dart';
 import 'package:the_homy/provider/auth_provider.dart';
 import 'package:the_homy/provider/services_provider.dart';
@@ -34,9 +35,9 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           debugShowCheckedModeBanner: false,
-          home: const NavigationMenu(),
+          home: const OTPPage(verificationID: '',phonenumber: '+911234567890',),
           
           ),
     );
   }
-}
+} 

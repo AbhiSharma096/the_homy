@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:the_homy/model/services.dart';
 import 'package:the_homy/pages/service_page2.dart';
 
 class ServiceTile extends StatelessWidget {
-  final String name;
-  final dynamic image;
-  final String function;
-  const ServiceTile(
-      {super.key,
-      required this.name,
-      required this.image,
-      required this.function});
+  final MyService service;
+  const ServiceTile({
+    super.key,
+    required this.service,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        var available = function;
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ServicesPage2(available: available),
+            builder: (context) => ServicesPage2(
+              service: service,
+            ),
           ),
         );
       },
@@ -38,14 +38,14 @@ class ServiceTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      service.name,
                       style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 18,
                           color: Colors.red.shade400,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(function,
+                    Text(service.fun,
                         style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 10,
@@ -56,10 +56,13 @@ class ServiceTile extends StatelessWidget {
             ),
           ),
           Container(
-              height: 180,
-              width: 155,
-              alignment: Alignment.bottomRight,
-              child: Image.asset('lib/assets/$image.png'))
+            margin: const EdgeInsets.only(left: 20,top: 30),
+            height: 145,
+            width: 120,
+            alignment: Alignment.bottomRight,
+            child: SvgPicture.asset('lib/assets/${service.img}.svg',fit: BoxFit.contain
+            ,),
+          )
         ],
       ),
     );

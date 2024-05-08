@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_homy/component/color.dart';
 import 'package:the_homy/pages/homepage.dart';
 import 'package:the_homy/pages/login_page.dart';
 import 'package:the_homy/pages/navigation_menu.dart';
+import 'package:the_homy/provider/auth_provider.dart';
 
 class SignupPage extends StatefulWidget {
   final Function()? onTap;
@@ -25,6 +27,21 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
 
+  late FocusNode _phoneFocusNode;
+  late FocusNode _emailFocusNode;
+  late FocusNode _addressFocusNode;
+  late FocusNode _cityFocusNode;
+
+  @override
+  void dispose() {
+    // Dispose FocusNode objects to avoid memory leaks
+    _phoneFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _addressFocusNode.dispose();
+    _cityFocusNode.dispose();
+    super.dispose();
+  }
+
   void onChange() {
     setState(() {
       checked = !checked;
@@ -33,6 +50,10 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    FocusNode phoneFocusNode = FocusNode();
+    FocusNode emailFocusNode = FocusNode();
+    FocusNode addressFocusNode = FocusNode();
+    FocusNode cityFocusNode = FocusNode();
     return Scaffold(
       backgroundColor: Colors.red.shade50,
       body: SafeArea(
@@ -55,15 +76,16 @@ class _SignupPageState extends State<SignupPage> {
                 const Center(
                   child: Text(
                     'Register Account',
-                    style: TextStyle(fontSize: 42,fontFamily: 'Poppins'),
+                    style: TextStyle(fontSize: 42, fontFamily: 'Poppins'),
                   ),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
+                // Name of the person
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 2.0, horizontal: 20.0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     color: Colors.white,
@@ -78,7 +100,7 @@ class _SignupPageState extends State<SignupPage> {
                       return null;
                     },
                     controller: _nameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: "Name",
                       hintStyle: TextStyle(
@@ -86,41 +108,17 @@ class _SignupPageState extends State<SignupPage> {
                         fontSize: 18.0,
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 14.0),
-                Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextFormField(
-                    cursorColor: Colors.red.shade400,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please Enter Phone Number';
-                      }
-                      return null;
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(phoneFocusNode);
                     },
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Phone Number",
-                      hintStyle: TextStyle(
-                        color: Color(0xFFb2b7bf),
-                        fontSize: 18.0,
-                      ),
-                    ),
                   ),
                 ),
                 const SizedBox(height: 14.0),
+                // Email
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 2.0, horizontal: 20.0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     color: Colors.white,
@@ -136,7 +134,7 @@ class _SignupPageState extends State<SignupPage> {
                     },
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: "Email",
                       hintStyle: TextStyle(
@@ -144,9 +142,66 @@ class _SignupPageState extends State<SignupPage> {
                         fontSize: 18.0,
                       ),
                     ),
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(addressFocusNode);
+                    },
                   ),
                 ),
                 const SizedBox(height: 14.0),
+
+                // Phone Number
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 2.0, horizontal: 20.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      const Text(
+                        "+91",
+                        style: TextStyle(
+                          color: Color(0xFFb2b7bf),
+                          fontSize: 18.0,
+                        ),
+                      ),
+                      const SizedBox(
+                          width:
+                              8), // Add some space between "+91" and the TextFormField
+                      Expanded(
+                        child: TextFormField(
+                          cursorColor: Colors.red.shade400,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please Enter Phone Number';
+                            }
+                            return null;
+                          },
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Phone Number",
+                            hintStyle: TextStyle(
+                              color: Color(0xFFb2b7bf),
+                              fontSize: 18.0,
+                            ),
+                          ),
+                          textInputAction: TextInputAction.next,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(emailFocusNode);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 14.0),
+                // Address
                 Container(
                   padding: const EdgeInsets.symmetric(
                       vertical: 2.0, horizontal: 20.0),
@@ -172,11 +227,16 @@ class _SignupPageState extends State<SignupPage> {
                         fontSize: 18.0,
                       ),
                     ),
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(cityFocusNode);
+                    },
                   ),
                 ),
                 const SizedBox(
                   height: 14,
                 ),
+                // City and Pincode
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -242,9 +302,10 @@ class _SignupPageState extends State<SignupPage> {
                   ],
                 ),
                 const SizedBox(height: 14.0),
+                // State
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 2.0, horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 2.0, horizontal: 20.0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     color: Colors.white,
@@ -259,7 +320,7 @@ class _SignupPageState extends State<SignupPage> {
                       return null;
                     },
                     controller: _stateController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: "State",
                       hintStyle: TextStyle(
@@ -267,11 +328,17 @@ class _SignupPageState extends State<SignupPage> {
                         fontSize: 18.0,
                       ),
                     ),
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) {
+                      sendPhoneNo();
+                    },
                   ),
                 ),
                 const SizedBox(
                   height: 16,
                 ),
+                // checkbox
+
                 Row(
                   children: [
                     Checkbox(
@@ -305,6 +372,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ],
                 ),
+                // Button
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
@@ -313,26 +381,49 @@ class _SignupPageState extends State<SignupPage> {
                   height: 55,
                   child: TextButton(
                       onPressed: () async {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => NavigationMenu()));
+                        sendPhoneNo();
+                        // Navigator.pushReplacement(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const NavigationMenu()));
                       },
                       child: const Text(
                         "SIGN UP",
-                        style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       )),
                 ),
-                SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Text('Already have an account? '),SizedBox(width: 12,),GestureDetector(onTap: widget.onTap, child: Text('Login',style: TextStyle(color: Colors.red.shade300),))],),),
+                    children: [
+                      const Text('Already have an account? '),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      GestureDetector(
+                          onTap: widget.onTap,
+                          child: Text(
+                            'Login',
+                            style: TextStyle(color: Colors.red.shade300),
+                          ))
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void sendPhoneNo() {
+    final ap = Provider.of<AuthProvider>(context, listen: false);
+    String phoneNumber = _phoneController.text.trim();
+    ap.signInWithPhone(context, '+91$phoneNumber');
   }
 }

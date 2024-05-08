@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:the_homy/pages/help_center.dart';
 
 class ProfilePage extends StatefulWidget {
-  
   const ProfilePage({super.key});
 
   @override
@@ -99,24 +101,39 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.4, // Adjust the height as needed
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  children: [
-                    OptionRow(icon: Icons.calendar_today, text: 'Calendar'),
-                    OptionRow(icon: Icons.share, text: 'Share'),
-                    OptionRow(icon: Icons.star, text: 'Rate and Review'),
-                    OptionRow(icon: Icons.account_circle, text: 'Help Center'),
-                    OptionRow(icon: Icons.lock, text: 'Logout'),
-                    OptionRow(icon: Icons.delete, text: 'Delete Account'),
-                    OptionRow(icon: Icons.info, text: 'About Us'),
-                  ],
+                child: Container(
+                  height: MediaQuery.of(context).size.height *
+                      0.4, // Adjust the height as needed
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      children: [
+                        OptionRow(icon: Icons.calendar_today, text: 'Calendar'),
+                        GestureDetector(
+                            onTap: () => {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HelpCenterPage()),
+                                  )
+                                },
+                            child: OptionRow(icon: Icons.account_circle, text: 'Help Center')),
+                        const OptionRow(
+                            icon: Icons.star, text: 'Rate and Review'),
+                        GestureDetector(
+                            onTap: () {},
+                            child: OptionRow(
+                                icon: Icons.share,
+                                text: 'Share')),
+                        const OptionRow(icon: Icons.lock, text: 'Logout'),
+                        const OptionRow(
+                            icon: Icons.delete, text: 'Delete Account'),
+                        const OptionRow(icon: Icons.info, text: 'About Us'),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
             ],
           ),
         ),

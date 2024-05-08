@@ -1,10 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:the_homy/auth/login_or_signup.dart';
 import 'package:the_homy/component/color.dart';
 import 'package:the_homy/onboarding.dart/onboarding_items.dart';
+import 'package:the_homy/pages/navigation_menu.dart';
+import 'package:the_homy/provider/auth_provider.dart';
 
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});
@@ -17,12 +20,14 @@ class _OnboardingViewState extends State<OnboardingView> {
   final controller = OnboardingItems();
   final pageController = PageController();
   List number = [];
-  Map<dynamic, dynamic> Benefits={};
+  Map<dynamic, dynamic> Benefits = {};
 
   bool isLastPage = false;
 
   @override
   Widget build(BuildContext context) {
+    final ap = Provider.of<AuthProvider>(context, listen: false);
+
     DatabaseReference _ref = FirebaseDatabase.instance
         .ref()
         .child('Data')
@@ -52,7 +57,7 @@ class _OnboardingViewState extends State<OnboardingView> {
         color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: isLastPage
-            ? getStarted()
+            ? getStarted(ap)
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -118,22 +123,21 @@ class _OnboardingViewState extends State<OnboardingView> {
 
   //Get started button
 
-  Widget getStarted() {
+  Widget getStarted(AuthProvider ap) {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8), color: primaryColor),
       width: MediaQuery.of(context).size.width * .9,
       height: 55,
       child: TextButton(
-          onPressed: () async {
-            final pres = await SharedPreferences.getInstance();
-            pres.setBool("onboarding", true);
-
-            //After we press get started button this onboarding value become true
-            // same key
-            if (!mounted) return;
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => LoginOrSignupPage()));
+          onPressed: () {
+            ap.isSignedIn
+                ? Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => NavigationMenu()))
+                : Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LoginOrSignupPage()));
           },
           child: const Text(
             "Get started",

@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:the_homy/component/combo_tile.dart';
@@ -23,7 +24,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Color backgroundColor = Color(0xFFFFF7F7);
   final ref = FirebaseDatabase.instance.ref('IOS/Service/');
-  
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +31,16 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: backgroundColor,
         appBar: AppBar(
           backgroundColor: backgroundColor,
-          actions: const [
+          actions:  [
             Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
-                    Icon(Icons.qr_code),
-                    SizedBox(
+                    const Icon(Icons.qr_code),
+                    const SizedBox(
                       width: 12,
                     ),
-                    Icon(Icons.notification_add_rounded)
+                    SvgPicture.asset('lib/assets/notification.svg')
                   ],
                 ))
           ],
@@ -57,6 +57,7 @@ class _HomePageState extends State<HomePage> {
                   width: 20,
                 ),
                 const Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       'welcome',
@@ -77,7 +78,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         body: Consumer<ServiceProvider>(builder: (context, provider, child) {
-          final dataList = provider.serviceList;
+          final serviceList = provider.serviceList;
           final state = provider.state;
           return SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -92,7 +93,19 @@ class _HomePageState extends State<HomePage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
+                          return Shimmer.fromColors(
+                            baseColor: Color.fromARGB(255, 238, 227, 227),
+                            highlightColor: Color.fromARGB(255, 255, 255, 255),
+                            child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Container(
+                                  height: 175,
+                                  width: 280,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10)),
+                                )),
+                          );
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
@@ -116,6 +129,7 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(
                       height: 16,
                     ),
+
                     Container(
                       padding: const EdgeInsets.only(
                         left: 12,
@@ -136,12 +150,12 @@ class _HomePageState extends State<HomePage> {
 
                     // Services container
 
-                    SizedBox(
-                      height: 185,
+                    Container(
                       child: state == ServiceState.loading
-                          ?  Shimmer.fromColors(
-                              baseColor: const Color.fromARGB(255, 225, 171, 171),
-                              highlightColor: Colors.red.shade100,
+                          ? Shimmer.fromColors(
+                              baseColor: Color.fromARGB(255, 238, 227, 227),
+                              highlightColor:
+                                  Color.fromARGB(255, 255, 255, 255),
                               child: const SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
@@ -155,22 +169,39 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                             )
-                    
-                          
-                          : ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: dataList.length,
-                              itemBuilder: (context, index) {
-                                final data = dataList[index];
-
-                                return ServiceTile(
-                                    name: data.name,
-                                    image: data.image,
-                                    function: data.function);
-                              },
-                            )
+                          : GridView.count(
+                              physics: NeverScrollableScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 16.0,
+                              crossAxisSpacing: 16.0,
+                              children:
+                                  List.generate(serviceList.length, (index) {
+                                final data = serviceList[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: ServiceTile(
+                                    service: data,
+                                  ),
+                                );
+                              }),
                             ),
-                          
+
+                      // ListView.builder(
+                      //     scrollDirection: Axis.horizontal,
+                      //     itemCount: serviceList.length,
+                      //     itemBuilder: (context, index) {
+                      //       final data = serviceList[index];
+                      //       return Padding(
+                      //         padding: EdgeInsets.only(left: 10),
+                      //         child: ServiceTile(
+                      //           service: data,
+                      //         ),
+                      //       );
+                      //     },
+                      //   ),
+                    ),
 
                     Container(
                       padding: const EdgeInsets.only(
@@ -234,3 +265,4 @@ class ShimmerBox extends StatelessWidget {
     );
   }
 }
+

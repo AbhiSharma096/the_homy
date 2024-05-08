@@ -12,12 +12,13 @@ class ServiceProvider extends ChangeNotifier {
   ServiceProvider() {
     _serviceList = [];
     state = ServiceState.loading;
-    _bannerList=getBannerImages();
-    _fetchData();
+     _bannerList = getBannerImages();
+     _fetchData();
   }
 
   List<MyService> get serviceList => _serviceList;
   Future<List<String>> get bannerList => _bannerList;
+  
 
   Future<List<String>> getBannerImages() async {
     // Replace 'banners' with your Firebase Storage folder path
@@ -40,9 +41,22 @@ class ServiceProvider extends ChangeNotifier {
         if (element.exists) {
           state = ServiceState.loading;
           var value = element.value as Map<dynamic, dynamic>;
-          MyService service = MyService(
-              name: value['Name'], function: value['Fun'], image: value['Img']
-              );
+          List<String> _benefits = [];
+          print(value);
+
+          print(_benefits);
+          MyService service = MyService.fromJson(value);
+
+          // MyService(
+          //   banner: value['Banner'],
+          //     name: value['Name'],
+          //     price: value['Price'],
+          //     desc: value['desc'],
+          //     fun: value['Fun'],
+          //     img: value['Img'],
+          //     benefits: value["Benefits"] == null ? [] : List<String>.from(value["Benefits"]!.map((x) => x)),
+          //     plans: value['Plans']==null ? []: List<Plan>.from(value['Plans']!.map((x)=> Plan.fromJson(x))),
+          //     );
 
           _serviceList.add(service);
         }
