@@ -41,8 +41,6 @@ class _CartPageState extends State<CartPage> {
               Image.asset('lib/assets/kitchen_king_name.png'),
 
             ],
-            
-            
           ),
         ),
       ),

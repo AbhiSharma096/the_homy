@@ -173,6 +173,7 @@ class _SignupPageState extends State<SignupPage> {
                               8), // Add some space between "+91" and the TextFormField
                       Expanded(
                         child: TextFormField(
+                          maxLength: 10,
                           cursorColor: Colors.red.shade400,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
