@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:the_homy/model/services.dart';
 import 'package:the_homy/pages/cart_page.dart';
 
 class RecentTile extends StatefulWidget {
@@ -18,7 +19,7 @@ class _RecentTileState extends State<RecentTile> {
   Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CartPage(),
+        builder: (context) => CartPage(service: MyService(banner: 'banner', benefits: [], fun: '', img: '', name: '', plans: [], price: '', desc: ''),),
       ));
 }
   @override

@@ -65,6 +65,8 @@ class AuthProvider extends ChangeNotifier {
       required String verificationID,
       required String userOTP,
       required Function onSuccess}) async {
+    _isLoading = true;
+    notifyListeners();
     try {
       PhoneAuthCredential cred = PhoneAuthProvider.credential(
           verificationId: verificationID, smsCode: userOTP);
@@ -73,7 +75,6 @@ class AuthProvider extends ChangeNotifier {
         _uid = user.uid;
         onSuccess();
       }
-
       _isLoading = false;
       notifyListeners();
     } on FirebaseAuthException catch (e) {
@@ -88,18 +89,27 @@ class AuthProvider extends ChangeNotifier {
         FirebaseDatabase.instance.ref().child('Users');
 
     DataSnapshot dataSnapshot;
-    try {
-      dataSnapshot =
-          await reference.child(_uid!).once().then((event) => event.snapshot);
-    } catch (e) {
-      showSnakBar(context, e.toString());
-      // Handle any errors that occurred during the read
-      print('Error reading data: $e');
+    //try {
+    dataSnapshot = await reference.child(_uid!).once().then((event) {
+      print(event.snapshot.value);
+      return event.snapshot;
+      //event.snapshot;
+    });
+    if (dataSnapshot.exists) {
+      return true;
+    } else {
       return false;
     }
-    print(dataSnapshot.value);
+    // } catch (e) {
+    //   showSnakBar(context, e.toString());
+    //   // Handle any errors that occurred during the read
+    //   print('Error reading data: $e');
+    //   return false;
+    // }
+    // print(dataSnapshot.value);
+    // return true;
 
-    return dataSnapshot.value != null;
+    //return dataSnapshot.value != null;
 
     // bool? value;
 

@@ -27,21 +27,6 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
 
-  late FocusNode _phoneFocusNode;
-  late FocusNode _emailFocusNode;
-  late FocusNode _addressFocusNode;
-  late FocusNode _cityFocusNode;
-
-  @override
-  void dispose() {
-    // Dispose FocusNode objects to avoid memory leaks
-    _phoneFocusNode.dispose();
-    _emailFocusNode.dispose();
-    _addressFocusNode.dispose();
-    _cityFocusNode.dispose();
-    super.dispose();
-  }
-
   void onChange() {
     setState(() {
       checked = !checked;
@@ -50,10 +35,6 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    FocusNode phoneFocusNode = FocusNode();
-    FocusNode emailFocusNode = FocusNode();
-    FocusNode addressFocusNode = FocusNode();
-    FocusNode cityFocusNode = FocusNode();
     return Scaffold(
       backgroundColor: Colors.red.shade50,
       body: SafeArea(
@@ -109,9 +90,6 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                     ),
                     textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(phoneFocusNode);
-                    },
                   ),
                 ),
                 const SizedBox(height: 14.0),
@@ -143,9 +121,6 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                     ),
                     textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(addressFocusNode);
-                    },
                   ),
                 ),
                 const SizedBox(height: 14.0),
@@ -192,9 +167,6 @@ class _SignupPageState extends State<SignupPage> {
                             ),
                           ),
                           textInputAction: TextInputAction.next,
-                          onFieldSubmitted: (_) {
-                            FocusScope.of(context).requestFocus(emailFocusNode);
-                          },
                         ),
                       ),
                     ],
@@ -229,9 +201,6 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                     ),
                     textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(cityFocusNode);
-                    },
                   ),
                 ),
                 const SizedBox(

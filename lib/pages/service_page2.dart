@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:the_homy/component/my_tab_bar.dart';
 import 'package:the_homy/component/sliver_appbar.dart';
 import 'package:the_homy/model/services.dart';
+import 'package:the_homy/pages/cart_page.dart';
 
 class ServicesPage2 extends StatefulWidget {
   final MyService service;
@@ -161,6 +162,8 @@ class _ServicesPageState2 extends State<ServicesPage2>
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedContainer(
+                      service: widget.service,
+                      index: index,
                       benefits: widget.service.plans[index].benefits,
                       name: widget.service.plans[index].name,
                     ),
@@ -177,15 +180,20 @@ class _ServicesPageState2 extends State<ServicesPage2>
 
 class ElevatedContainer extends StatelessWidget {
   final List<String> benefits;
+  final MyService service;
   final String name;
+  final int index;
 
-  const ElevatedContainer(
-      {super.key, required this.name, required this.benefits});
+  const ElevatedContainer({
+    super.key,
+    required this.name,
+    required this.benefits,
+    required this.index, required this.service,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-
       margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.0),
@@ -226,7 +234,8 @@ class ElevatedContainer extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: benefits.length*35, // Adjust the height based on your needs
+            height:
+                benefits.length * 35, // Adjust the height based on your needs
             child: ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               itemCount: benefits.length,
@@ -235,7 +244,6 @@ class ElevatedContainer extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12.0, vertical: 6.0),
                     child: Row(
-                      
                       children: [
                         const Icon(
                           Icons.circle,
@@ -245,7 +253,7 @@ class ElevatedContainer extends StatelessWidget {
                           width: 10,
                         ),
                         Container(
-                          width: MediaQuery.sizeOf(context).width*0.7,
+                          width: MediaQuery.sizeOf(context).width * 0.7,
                           child: Text(
                             benefits[index],
                             style: const TextStyle(
@@ -263,7 +271,14 @@ class ElevatedContainer extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Center(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartPage( service: service,),
+                    ),
+                  );
+                },
                 child: Container(
                   height: 26.0,
                   width: 120.0,
@@ -282,7 +297,9 @@ class ElevatedContainer extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 20,)
+          SizedBox(
+            height: 20,
+          )
         ],
       ),
     );

@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:the_homy/component/back_button.dart';
 import 'package:the_homy/component/color.dart';
 import 'package:the_homy/pages/homepage.dart';
 import 'package:the_homy/pages/navigation_menu.dart';
+import 'package:the_homy/provider/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
   final Function() onTap;
@@ -123,6 +125,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void sendPhoneNo() {
+    final ap = Provider.of<AuthProvider>(context, listen: false);
+    String phoneNumber = _phoneNumberController.text.trim();
+    ap.signInWithPhone(context, '+91$phoneNumber');
   }
 }
 

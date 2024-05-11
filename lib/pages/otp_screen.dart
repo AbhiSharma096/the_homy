@@ -26,11 +26,13 @@ class _OTPPageState extends State<OTPPage> {
         Provider.of<AuthProvider>(context, listen: true).isLoading;
     return Scaffold(
         backgroundColor: Color(0xFFFFF8F8),
-        body: isLoading == true ? Center(child: CircularProgressIndicator(),):
-        
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child:  SingleChildScrollView(
+        body: isLoading == true
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(20),
+                child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
@@ -144,30 +146,34 @@ class _OTPPageState extends State<OTPPage> {
                     ],
                   ),
                 ),
-        ));
+              ));
   }
 
   void verifyOTP(BuildContext context, String userOTP) async {
     //verify otp
 
-    final ap = Provider.of<AuthProvider>(
-      context, listen: false
-    );
+    final ap = Provider.of<AuthProvider>(context, listen: false);
+    
     ap.verifyOTP(
         context: context,
         verificationID: widget.verificationID,
         userOTP: userOTP,
         onSuccess: () async {
           ap.checkexistingUser(context).then((value) async {
-            if (value == true) {
+            if (value != true) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => LoginPage(
+                            onTap: () {},
+                          ),),);
             } else {
               Navigator.pushAndRemoveUntil(
-                  context, MaterialPageRoute(builder: (context) => HomePage()),(route)=> false);
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                  (route) => false);
             }
           });
-
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => LoginPage(onTap: (){},)));
         });
   }
 }
