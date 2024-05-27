@@ -3,119 +3,178 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:the_homy/onboarding.dart/onboarding_view.dart';
 import 'package:the_homy/pages/otp_screen.dart';
+import 'package:the_homy/model/user.dart';
 import 'package:the_homy/utils/utils.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isSignedIn = false;
   bool _isOnboarded = false;
-  bool get isOnborded => _isOnboarded;
-  bool get isSignedIn => _isSignedIn;
   bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  bool _userLoading = false;
   String? _uid;
-  String get uid => _uid!;
+  MyUser? _myUser = null;
+  int? _avatar;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  bool get isOnboarded => _isOnboarded;
+  int? get avatar => _avatar;
+  bool get isSignedIn => _isSignedIn;
+  bool get isLoading => _isLoading;
+  bool get userLoading => _userLoading;
+  String get uid => _uid!;
+  MyUser? get myUser => _myUser!;
+
   AuthProvider() {
-    checkSignIn();
+    _initialize();
   }
 
-  void onboarding() async {
-    final SharedPreferences onb = await SharedPreferences.getInstance();
-    _isOnboarded = onb.getBool('is_onboarded') ?? false;
+  Future<void> _initialize() async {
+    await _checkOnboarding();
+    await _checkSignIn();
+    await _checkAvatar();
+    await getUser();
+  }
+
+  Future<void> _checkOnboarding() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _isOnboarded = prefs.getBool('is_onboarded') ?? false;
     notifyListeners();
   }
 
-  void signInWithPhone(BuildContext context, String phoneNumber) async {
+  Future<void> _checkSignIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _isSignedIn = prefs.getBool("is_signed_in") ?? false;
+    notifyListeners();
+  }
+
+  Future<void> setSignin() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('is_signed_in', true);
+    _isSignedIn = true;
+    notifyListeners();
+  }
+
+  Future<void> setSignout(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('is_signed_in', false);
+    _isSignedIn = false;
+    _uid = null;
+    notifyListeners();
+    await _firebaseAuth.signOut();
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => OnboardingView()));
+  }
+
+  Future<void> signInWithPhone(
+      BuildContext context, String phoneNumber, MyUser? user) async {
+    _setLoading(true);
     try {
       await _firebaseAuth.verifyPhoneNumber(
-          phoneNumber: phoneNumber,
-          verificationCompleted:
-              (PhoneAuthCredential phoneAuthCredential) async {
-            await _firebaseAuth.signInWithPhoneNumber(phoneNumber);
-          },
-          verificationFailed: (error) {
-            throw Exception(error.message);
-          },
-          codeSent: (verificationId, forceResendingToken) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => OTPPage(
-                          verificationID: verificationId,
-                          phonenumber: phoneNumber,
-                        )));
-          },
-          codeAutoRetrievalTimeout: (verificationId) {});
-    } on FirebaseAuthException catch (e) {
-      showSnakBar(context, e.message.toString());
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          await _firebaseAuth.signInWithCredential(credential);
+        },
+        verificationFailed: (FirebaseAuthException error) {
+          throw Exception(error.message);
+        },
+        codeSent: (String verificationId, int? forceResendingToken) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OTPPage(
+                verificationID: verificationId,
+                phonenumber: phoneNumber,
+                user: user,
+              ),
+            ),
+          );
+          _setLoading(false);
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
+    } catch (e) {
+      _setLoading(false);
+      showSnakBar(context, e.toString());
     }
   }
 
-  void checkSignIn() async {
-    final SharedPreferences s = await SharedPreferences.getInstance();
-    _isSignedIn = s.getBool("is_signed_in") ?? false;
-    notifyListeners();
-  }
-
-  void verifyOTP(
-      {required BuildContext context,
-      required String verificationID,
-      required String userOTP,
-      required Function onSuccess}) async {
-    _isLoading = true;
-    notifyListeners();
+  Future<void> verifyOTP({
+    required BuildContext context,
+    required String verificationID,
+    required String userOTP,
+    required Function onSuccess,
+  }) async {
+    _setLoading(true);
     try {
-      PhoneAuthCredential cred = PhoneAuthProvider.credential(
-          verificationId: verificationID, smsCode: userOTP);
-      User? user = (await _firebaseAuth.signInWithCredential(cred)).user!;
-      if (user != null) {
-        _uid = user.uid;
-        onSuccess();
-      }
-      _isLoading = false;
-      notifyListeners();
-    } on FirebaseAuthException catch (e) {
-      showSnakBar(context, e.message.toString());
-      _isLoading = false;
-      notifyListeners();
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificationID,
+        smsCode: userOTP,
+      );
+      User? user = (await _firebaseAuth.signInWithCredential(credential)).user;
+      _uid = user?.uid;
+      onSuccess();
+      _setLoading(false);
+    } catch (e) {
+      showSnakBar(context, e.toString());
+      _setLoading(false);
     }
   }
 
-  Future<bool> checkexistingUser(BuildContext context) async {
+  Future<bool> checkExistingUser() async {
     DatabaseReference reference =
         FirebaseDatabase.instance.ref().child('Users');
-
-    DataSnapshot dataSnapshot;
-    //try {
-    dataSnapshot = await reference.child(_uid!).once().then((event) {
-      print(event.snapshot.value);
+    String uid = _firebaseAuth.currentUser?.uid ?? '';
+    DataSnapshot dataSnapshot = await reference.child(uid).once().then((event) {
       return event.snapshot;
-      //event.snapshot;
     });
-    if (dataSnapshot.exists) {
-      return true;
-    } else {
-      return false;
-    }
-    // } catch (e) {
-    //   showSnakBar(context, e.toString());
-    //   // Handle any errors that occurred during the read
-    //   print('Error reading data: $e');
-    //   return false;
-    // }
-    // print(dataSnapshot.value);
-    // return true;
 
-    //return dataSnapshot.value != null;
+    return dataSnapshot.exists;
+  }
 
-    // bool? value;
+  Future<void> setUser(MyUser user) async {
+    _setLoading(true);
+    DatabaseReference reference =
+        FirebaseDatabase.instance.ref().child('Users');
+    await reference.child(_uid!).set(user.toJson());
+    _setLoading(false);
+  }
 
-    // reference.orderByKey().equalTo(_uid).once().then((snapshot) => {
-    //       if (!snapshot.snapshot.child(_uid!).exists) {value = false} else {value = true}
-    //     });
-    // return value!;
+  Future<void> getUser() async {
+    if (_firebaseAuth.currentUser == null) return;
+
+    _setUserLoading(true);
+    DatabaseReference reference =
+        await FirebaseDatabase.instance.ref().child('Users');
+    String uid = await _firebaseAuth.currentUser!.uid;
+    DataSnapshot dataSnapshot = await reference.child(uid).get();
+    _myUser = MyUser.fromJson(dataSnapshot.value as Map);
+    print(_myUser?.userName);
+    _setUserLoading(false);
+  }
+
+  Future<void> _checkAvatar() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _avatar = prefs.getInt('avatar') ?? 1; // Set default value to 1
+    notifyListeners();
+  }
+
+  Future<void> setAvatar(int value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('avatar', value);
+    _avatar = value;
+    notifyListeners();
+  }
+
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void _setUserLoading(bool value) {
+    _userLoading = value;
+    notifyListeners();
   }
 }

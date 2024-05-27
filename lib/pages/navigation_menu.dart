@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:the_homy/pages/all_recipe_page.dart';
 import 'package:the_homy/pages/homepage.dart';
 import 'package:the_homy/pages/profile_page.dart';
 import 'package:the_homy/pages/recent_page.dart';
@@ -55,5 +56,10 @@ class NavigationMenu extends StatelessWidget {
 class NavigationControler extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
 
-  final Screens = [HomePage(),Container(color: Colors.blue[100],),RecentPage(),ProfilePage()];
+  final Screens = [HomePage(),AllRecipePage(),RecentPage(),ProfilePage()];
+
+  void navigateToPage(int index, Widget newPage) {
+    Screens[index] = newPage;
+    selectedIndex.value = index;
+  }
 }

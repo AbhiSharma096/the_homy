@@ -17,7 +17,7 @@ class MySliverAppBar extends StatelessWidget {
           color: Colors.red.shade400,
         ),
       ),
-      expandedHeight: 340,
+      expandedHeight: 360,
       collapsedHeight: 120,
       floating: false,
       pinned: true,

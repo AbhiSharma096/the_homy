@@ -36,7 +36,7 @@ class ServiceProvider extends ChangeNotifier {
     DatabaseReference reference =
         FirebaseDatabase.instance.ref().child('IOS/Service');
     // Listen for events from the database
-    reference.onValue.listen((event) {
+    reference.once().then((event) {
       event.snapshot.children.forEach((element) {
         if (element.exists) {
           state = ServiceState.loading;

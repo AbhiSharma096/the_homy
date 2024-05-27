@@ -1,7 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:the_homy/auth/login_or_signup.dart';
 import 'package:the_homy/component/color.dart';
@@ -26,6 +25,10 @@ class _OnboardingViewState extends State<OnboardingView> {
 
   @override
   Widget build(BuildContext context) {
+    
+    
+    
+
     final ap = Provider.of<AuthProvider>(context, listen: false);
 
     DatabaseReference _ref = FirebaseDatabase.instance

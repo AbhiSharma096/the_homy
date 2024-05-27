@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_homy/firebase_options.dart';
 import 'package:the_homy/onboarding.dart/onboarding_view.dart';
-import 'package:the_homy/pages/homepage.dart';
 import 'package:the_homy/pages/navigation_menu.dart';
-import 'package:the_homy/pages/otp_screen.dart';
-import 'package:the_homy/pages/test.dart';
 import 'package:the_homy/provider/auth_provider.dart';
 import 'package:the_homy/provider/services_provider.dart';
 
@@ -23,21 +20,29 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_)=> AuthProvider()),
-        ChangeNotifierProvider(create: (_)=> ServiceProvider())
-        
-      ],
-      child: MaterialApp(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => ServiceProvider())
+        ],
+        child: MaterialApp(
           title: 'The Homy',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
             useMaterial3: true,
           ),
           debugShowCheckedModeBanner: false,
-          home: const OnboardingView(),
-          
+          home: Consumer<AuthProvider>(
+            builder: (context, authProvider, _) {
+              // Conditionally navigate based on the isSignIn value
+              if (authProvider.isSignedIn) {
+                // If the user is signed in, navigate to HomeScreen
+                return const NavigationMenu();
+              } else {
+                // If the user is not signed in, show the onboarding view
+                return const OnboardingView();
+              }
+            },
           ),
-    );
+        ));
   }
-} 
+}

@@ -1,18 +1,23 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
-import 'package:the_homy/pages/homepage.dart';
-import 'package:the_homy/pages/login_page.dart';
+import 'package:the_homy/model/user.dart';
+import 'package:the_homy/pages/navigation_menu.dart';
 import 'package:the_homy/provider/auth_provider.dart';
 import 'package:the_homy/utils/utils.dart';
 
 class OTPPage extends StatefulWidget {
   final String verificationID;
   final String phonenumber;
+  final MyUser? user;
   const OTPPage(
-      {super.key, required this.verificationID, required this.phonenumber});
+      {super.key,
+      required this.verificationID,
+      required this.phonenumber,
+       this.user});
 
   @override
   State<OTPPage> createState() => _OTPPageState();
@@ -25,9 +30,9 @@ class _OTPPageState extends State<OTPPage> {
     final isLoading =
         Provider.of<AuthProvider>(context, listen: true).isLoading;
     return Scaffold(
-        backgroundColor: Color(0xFFFFF8F8),
+        backgroundColor: const Color(0xFFFFF8F8),
         body: isLoading == true
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(),
               )
             : Padding(
@@ -119,7 +124,7 @@ class _OTPPageState extends State<OTPPage> {
                         child: GestureDetector(
                           onTap: () {
                             if (otpCode != null) {
-                              verifyOTP(context, otpCode!);
+                              verifyOTP(context, otpCode!, widget.user);
                             } else {
                               showSnakBar(
                                   context, "Enter 6 digit verification code");
@@ -149,28 +154,40 @@ class _OTPPageState extends State<OTPPage> {
               ));
   }
 
-  void verifyOTP(BuildContext context, String userOTP) async {
+  void verifyOTP(BuildContext context, String userOTP, MyUser? user) async {
     //verify otp
 
     final ap = Provider.of<AuthProvider>(context, listen: false);
-    
+
     ap.verifyOTP(
         context: context,
         verificationID: widget.verificationID,
         userOTP: userOTP,
         onSuccess: () async {
-          ap.checkexistingUser(context).then((value) async {
+          ap.checkExistingUser().then((value) async {
             if (value != true) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => LoginPage(
-                            onTap: () {},
-                          ),),);
-            } else {
+              try {
+                if(user!=null) {
+                  ap.setUser(user);
+                }
+              } on FirebaseException catch (e) {
+                showSnakBar(context, e.message.toString());
+                return;
+              }
+              ap.setSignin().then((value) => true);
+
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(
+                    builder: (context) => const NavigationMenu(),
+                  ),
+                  (route) => false);
+            } else {
+              ap.setSignin().then((value) => true);
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const NavigationMenu()),
                   (route) => false);
             }
           });

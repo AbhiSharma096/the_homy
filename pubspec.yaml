@@ -52,6 +52,8 @@ dependencies:
   cached_network_image: ^3.3.1
   flutter_svg: ^2.0.10+1
   pinput: ^4.0.0
+  toggle_switch: ^0.1.6
+  intl: ^0.17.0 
 
 dev_dependencies:
   flutter_test:

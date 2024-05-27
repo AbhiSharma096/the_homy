@@ -19,7 +19,7 @@ class _RecentTileState extends State<RecentTile> {
   Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CartPage(service: MyService(banner: 'banner', benefits: [], fun: '', img: '', name: '', plans: [], price: '', desc: ''),),
+        builder: (context) => CartPage(index: 2,service: MyService(banner: 'banner', benefits: [], fun: '', img: '', name: '', plans: [], price: '', desc: ''),),
       ));
 }
   @override

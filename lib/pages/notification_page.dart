@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class RecentPage extends StatefulWidget {
-  const RecentPage({super.key});
+class NotificationPage extends StatefulWidget {
+  const NotificationPage({super.key});
 
   @override
-  State<RecentPage> createState() => _RecentPageState();
+  State<NotificationPage> createState() => _RecentPageState();
 }
 
-class _RecentPageState extends State<RecentPage> {
+class _RecentPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Column(children: [
             Text(
-              'Recent Plans',
+              'Notifiactions',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Caladea',
@@ -40,7 +40,7 @@ class _RecentPageState extends State<RecentPage> {
               size: 120,
             ),
             Text(
-              'Currently No Transaction',
+              'Currently Empty',
               style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 28,

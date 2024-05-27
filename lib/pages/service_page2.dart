@@ -275,7 +275,7 @@ class ElevatedContainer extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CartPage( service: service,),
+                      builder: (context) => CartPage(index: index, service: service,),
                     ),
                   );
                 },
