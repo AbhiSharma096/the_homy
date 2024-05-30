@@ -5,6 +5,7 @@ import 'package:the_homy/model/cart_item.dart';
 import 'package:the_homy/model/services.dart';
 import 'package:the_homy/pages/payment_page.dart';
 import 'package:the_homy/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum Package { Morning, Noon, Evening }
 
@@ -19,6 +20,23 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  void _launchDialer(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    try {
+      if (await canLaunchUrl(launchUri)) {
+        await launchUrl(launchUri);
+      } else {
+        print('Could not launch $launchUri');
+        throw 'Could not launch $launchUri';
+      }
+    } catch (e) {
+      print('Exception occurred while launching dialer: $e');
+    }
+  }
+
   final Set<Package> _selectedPackages = {};
   int people = 1;
   int totalPrice = 0;
@@ -359,7 +377,9 @@ class _CartPageState extends State<CartPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: ElevatedButton(
-                  onPressed: _onContinue,
+                  onPressed: () {
+                    _launchDialer('+91 8130519564');
+                  },
                   child: const Text('Continue'),
                 ),
               ),
