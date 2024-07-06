@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:the_homy/pages/edit_profile_page.dart';
 import 'package:the_homy/pages/help_center.dart';
 import 'package:the_homy/provider/auth_provider.dart';
@@ -46,12 +47,15 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void _shareApp() {
+    final appLink =
+        'https://play.google.com/store/apps/details?id=com.yourapp'; // Replace with your app link
+    Share.share('Check out this cool app: $appLink');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer2<AuthProvider, ServiceProvider>(
-        builder: (context, authProvider, provider, child) {
-      
-
+    return Consumer<AuthProvider>(builder: (context, authProvider, child) {
       return SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -115,8 +119,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ClipOval(
                             child: Image.asset(
                               'lib/assets/avatar${authProvider.avatar}.png',
-                              width: 70,
-                              height: 70,
+                              width: 90,
+                              height: 90,
                               fit: BoxFit
                                   .cover, // Adjust this to control how the image fills the circular shape
                             ),
@@ -125,20 +129,22 @@ class _ProfilePageState extends State<ProfilePage> {
                             height: 35,
                           ),
                           Text(
-                            authProvider.myUser!.userName ?? 'Guest',
+                            authProvider.myUser?.userName ?? 'Guest',
                             style: const TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w200,
                                 fontSize: 20,
                                 color: Colors.white),
                           ),
-                          Text(authProvider.myUser!.userPhoneNumber ?? 'Guest Phone Number',
+                          Text(
+                              authProvider.myUser?.userPhoneNumber ??
+                                  'Guest Phone Number',
                               style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w200,
                                   fontSize: 14.75,
                                   color: Colors.white)),
-                          Text(authProvider.myUser!.address['city'] ?? 'Guest',
+                          Text(authProvider.myUser?.address['city'] ?? 'Guest',
                               style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w200,
@@ -174,7 +180,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           const OptionRow(
                               icon: Icons.star, text: 'Rate and Review'),
                           GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                _shareApp();
+                              },
                               child: const OptionRow(
                                   icon: Icons.share, text: 'Share')),
                           GestureDetector(
@@ -183,8 +191,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               },
                               child: const OptionRow(
                                   icon: Icons.lock, text: 'Logout')),
-                          const OptionRow(
-                              icon: Icons.delete, text: 'Delete Account'),
+                          // const OptionRow(
+                          //     icon: Icons.delete, text: 'Delete Account'),
                           const OptionRow(icon: Icons.info, text: 'About Us'),
                         ],
                       ),

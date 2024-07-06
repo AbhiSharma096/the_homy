@@ -14,7 +14,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _userLoading = false;
   String? _uid;
-  MyUser? _myUser = null;
+  MyUser? _myUser;
   int? _avatar;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -25,7 +25,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get userLoading => _userLoading;
   String get uid => _uid!;
-  MyUser? get myUser => _myUser!;
+  MyUser? get myUser => _myUser;
 
   AuthProvider() {
     _initialize();
@@ -41,12 +41,20 @@ class AuthProvider extends ChangeNotifier {
   Future<void> _checkOnboarding() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _isOnboarded = prefs.getBool('is_onboarded') ?? false;
+    if (prefs.getBool('is_onboarded') == null) {
+      // If value is not present, explicitly set it
+      await prefs.setBool('is_onboarded', false);
+    }
     notifyListeners();
   }
 
   Future<void> _checkSignIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _isSignedIn = prefs.getBool("is_signed_in") ?? false;
+    if (prefs.getBool('is_signed_in') == null) {
+      // If value is not present, explicitly set it
+      await prefs.setBool('is_signed_in', false);
+    }
     notifyListeners();
   }
 
@@ -76,8 +84,11 @@ class AuthProvider extends ChangeNotifier {
         phoneNumber: phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
           await _firebaseAuth.signInWithCredential(credential);
+          _setLoading(
+              false); // Ensure loading is set to false after successful verification
         },
         verificationFailed: (FirebaseAuthException error) {
+          _setLoading(false); // Ensure loading is set to false on error
           throw Exception(error.message);
         },
         codeSent: (String verificationId, int? forceResendingToken) {
@@ -93,7 +104,9 @@ class AuthProvider extends ChangeNotifier {
           );
           _setLoading(false);
         },
-        codeAutoRetrievalTimeout: (String verificationId) {},
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _setLoading(false); // Ensure loading is set to false on timeout
+        },
       );
     } catch (e) {
       _setLoading(false);
@@ -114,7 +127,7 @@ class AuthProvider extends ChangeNotifier {
         smsCode: userOTP,
       );
       User? user = (await _firebaseAuth.signInWithCredential(credential)).user;
-      _uid = user?.uid;
+      _uid = user!.uid;
       onSuccess();
       _setLoading(false);
     } catch (e) {
@@ -147,11 +160,11 @@ class AuthProvider extends ChangeNotifier {
 
     _setUserLoading(true);
     DatabaseReference reference =
-        await FirebaseDatabase.instance.ref().child('Users');
-    String uid = await _firebaseAuth.currentUser!.uid;
+        FirebaseDatabase.instance.ref().child('Users');
+    String uid = _firebaseAuth.currentUser!.uid;
     DataSnapshot dataSnapshot = await reference.child(uid).get();
     _myUser = MyUser.fromJson(dataSnapshot.value as Map);
-    print(_myUser?.userName);
+    //print(_myUser?.userName);
     _setUserLoading(false);
   }
 

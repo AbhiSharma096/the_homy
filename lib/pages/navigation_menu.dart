@@ -54,6 +54,7 @@ class NavigationMenu extends StatelessWidget {
 }
 
 class NavigationControler extends GetxController {
+  
   final Rx<int> selectedIndex = 0.obs;
 
   final Screens = [HomePage(),AllRecipePage(),RecentPage(),ProfilePage()];

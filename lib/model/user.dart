@@ -7,9 +7,9 @@ class MyUser {
     this.avatar,
   });
 
-  final String userName;
-  final String userEmail;
-  final String userPhoneNumber;
+  final String? userName;
+  final String? userEmail;
+  final String? userPhoneNumber;
   final Map<String, String> address;
   final int? avatar;
 

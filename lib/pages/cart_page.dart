@@ -43,7 +43,6 @@ class _CartPageState extends State<CartPage> {
   DateTime? selectedDate;
   int selectedPlanIndex = -1;
   String selectedPlan = 'select a Plan';
-
   final Map<String, String> _selectedTimes = {};
 
   void _handleSelectionChanged(Set<Package> selectedPackages) {
@@ -72,7 +71,7 @@ class _CartPageState extends State<CartPage> {
       setState(() {
         totalPrice =
             widget.service.plans[widget.index].price[selectedPlanIndex].price! *
-                _selectedPackages.length;
+                _selectedTimes.length;
       });
     }
   }
@@ -105,6 +104,13 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.red.shade400,
+          ),
+        ),
         title: Column(children: [
           Text(
             'Cart',
@@ -176,93 +182,96 @@ class _CartPageState extends State<CartPage> {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.red.shade50,
-                      border: Border.all(color: Colors.black, width: 1)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(selectedPlan),
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (_) {
-                                  return SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 300,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          selectedPlanIndex == -1
-                                              ? 'Please select a plan.'
-                                              : widget
-                                                  .service
-                                                  .plans[widget.index]
-                                                  .price[selectedPlanIndex]
-                                                  .plan!,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: 'Poppins',
-                                              fontSize: 20),
-                                        ),
-                                        SizedBox(
-                                          height: 180,
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 20),
-                                            child: ListView.builder(
-                                                scrollDirection: Axis.vertical,
-                                                itemCount: widget
-                                                    .service
-                                                    .plans[widget.index]
-                                                    .price
-                                                    .length,
-                                                itemBuilder: (context, index) =>
-                                                    _buildPlanOption(
-                                                        index,
-                                                        context,
-                                                        widget
-                                                            .service
-                                                            .plans[widget.index]
-                                                            .price[index]
-                                                            .plan!)),
-                                          ),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            ElevatedButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Cancel')),
-                                            ElevatedButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Ok'))
-                                          ],
-                                        )
-                                      ],
+                child: GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled:
+                          true, // Allows the bottom sheet to be expandable
+                      builder: (BuildContext context) {
+                        return DraggableScrollableSheet(
+                          expand: false,
+                          initialChildSize:
+                              0.4, // Initial size of the sheet (40% of the screen height)
+                          minChildSize:
+                              0.2, // Minimum size of the sheet (20% of the screen height)
+                          maxChildSize:
+                              0.6, // Maximum size of the sheet (80% of the screen height)
+                          builder: (BuildContext context,
+                              ScrollController scrollController) {
+                            return Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    selectedPlanIndex == -1
+                                        ? 'Please select a plan.'
+                                        : widget.service.plans[widget.index]
+                                            .price[selectedPlanIndex].plan!,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Poppins',
+                                      fontSize: 20,
                                     ),
-                                  );
-                                });
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      controller: scrollController,
+                                      itemCount: widget.service
+                                          .plans[widget.index].price.length,
+                                      itemBuilder: (context, index) =>
+                                          _buildPlanOption(
+                                              index,
+                                              context,
+                                              widget.service.plans[widget.index]
+                                                  .price[index].plan!),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Cancel'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Ok'),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
                           },
-                          child:
-                              const Icon(Icons.arrow_drop_down_circle_outlined),
-                        )
-                      ],
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.red.shade50,
+                        border: Border.all(color: Colors.black, width: 1)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(selectedPlan),
+                          Icon(Icons.arrow_drop_down_circle_outlined),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -353,34 +362,74 @@ class _CartPageState extends State<CartPage> {
                 child: Container(
                   height: 50,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.red.shade50,
-                      border: Border.all(color: Colors.black, width: 1)),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.red.shade50,
+                    border: Border.all(color: Colors.black, width: 1),
+                  ),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Amount to be paid.'),
-                          Text(
-                            totalPrice.toString(),
-                            style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700),
-                          )
-                        ]),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Amount to be paid',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: '₹',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              TextSpan(
+                                text: totalPrice.toString(),
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              ////////////////// Continue button /////////////////////////////
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _launchDialer('+91 8130519564');
+                child: GestureDetector(
+                  onTap: () {
+                    _onContinue();
                   },
-                  child: const Text('Continue'),
+                  child: Container(
+                    height: 60,
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    decoration: BoxDecoration(
+                        color: Colors.red,
+                        border: Border.all(color: Colors.red.shade900),
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Center(
+                        child: const Text(
+                      'Continue',
+                      style:
+                          TextStyle(color: Colors.white, fontFamily: 'Poppins',fontSize: 17,fontWeight: FontWeight.w500),
+                    )),
+                  ),
                 ),
               ),
             ],
@@ -391,22 +440,27 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _buildPlanOption(int index, BuildContext context, String plan) {
-    return ListTile(
-      title: Text(plan),
-      onTap: () {
-        setState(() {
-          selectedPlan = plan;
-          selectedPlanIndex = index;
-          _setprice();
-        });
-        Navigator.pop(context);
-      },
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        dense: true,
+        shape: StadiumBorder(side: BorderSide()),
+        title: Text(plan),
+        onTap: () {
+          setState(() {
+            selectedPlan = plan;
+            selectedPlanIndex = index;
+            _setprice();
+          });
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }
 
 class PackageSelectionCard extends StatefulWidget {
-  final void setPrice;
+  final void Function() setPrice;
   final void Function(Set<Package>) onSelectionChanged;
   final Map<String, String> selectedTimes;
 
@@ -414,7 +468,7 @@ class PackageSelectionCard extends StatefulWidget {
     super.key,
     required this.onSelectionChanged,
     required this.selectedTimes,
-    this.setPrice,
+    required this.setPrice,
   });
 
   @override
@@ -426,16 +480,33 @@ class _PackageSelectionCardState extends State<PackageSelectionCard> {
 
   void _onPackageSelected(Package package, String time) {
     setState(() {
-      if (_selectedPackages.contains(package) && _selectedPackages.length > 1) {
-        _selectedPackages.remove(package);
-        widget.selectedTimes.remove(package.toString().split('.').last);
+      if (_selectedPackages.contains(package)) {
+        if (_selectedPackages.length > 1) {
+          _selectedPackages.remove(package);
+          widget.selectedTimes.remove(package.toString().split('.').last);
+        }
       } else {
         _selectedPackages.add(package);
         widget.selectedTimes[package.toString().split('.').last] = time;
       }
     });
-    widget.setPrice;
+
     widget.onSelectionChanged(_selectedPackages);
+    widget.setPrice(); // Correctly calling setPrice
+  }
+
+  void _onTimeSelected(Package package, String time) {
+    setState(() {
+      if (_selectedPackages.contains(package)) {
+        widget.selectedTimes[package.toString().split('.').last] = time;
+      } else {
+        _selectedPackages.add(package);
+        widget.selectedTimes[package.toString().split('.').last] = time;
+      }
+    });
+
+    widget.onSelectionChanged(_selectedPackages);
+    widget.setPrice(); // Correctly calling setPrice
   }
 
   @override
@@ -448,10 +519,12 @@ class _PackageSelectionCardState extends State<PackageSelectionCard> {
             children: Package.values.map((Package package) {
               return Expanded(
                 child: GestureDetector(
-                  onTap: () => _onPackageSelected(
-                      package,
-                      widget.selectedTimes[package.toString()] ??
-                          'select values'),
+                  onTap: () {
+                    _onPackageSelected(
+                        package,
+                        widget.selectedTimes[package.toString()] ??
+                            _dropdownValues[package]!.first);
+                  },
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
@@ -477,9 +550,11 @@ class _PackageSelectionCardState extends State<PackageSelectionCard> {
                           height: 10,
                         ),
                         DropdownButton<String>(
-                          value: widget.selectedTimes[package.toString()],
+                          value: widget.selectedTimes[
+                                  package.toString().split('.').last] ??
+                              _dropdownValues[package]?.first,
                           onChanged: (String? newValue) {
-                            _onPackageSelected(package, newValue!);
+                            _onTimeSelected(package, newValue!);
                           },
                           items: _dropdownValues[package]!
                               .map<DropdownMenuItem<String>>((String value) {

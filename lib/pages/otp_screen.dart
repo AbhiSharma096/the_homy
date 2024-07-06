@@ -17,7 +17,7 @@ class OTPPage extends StatefulWidget {
       {super.key,
       required this.verificationID,
       required this.phonenumber,
-       this.user});
+      this.user});
 
   @override
   State<OTPPage> createState() => _OTPPageState();
@@ -102,20 +102,20 @@ class _OTPPageState extends State<OTPPage> {
                       const SizedBox(
                         height: 12,
                       ),
-                      const Text(
-                        'OTP not recieved? 00:59',
-                        style: TextStyle(fontSize: 14, fontFamily: 'Poopins'),
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      GestureDetector(
-                          onTap: () {},
-                          child: const Text(
-                            'Resend OTP',
-                            style:
-                                TextStyle(fontSize: 14, fontFamily: 'Poopins'),
-                          )),
+                      // const Text(
+                      //   'OTP not recieved? 00:59',
+                      //   style: TextStyle(fontSize: 14, fontFamily: 'Poopins'),
+                      // ),
+                      // const SizedBox(
+                      //   height: 12,
+                      // ),
+                      // GestureDetector(
+                      //     onTap: () {},
+                      //     child: const Text(
+                      //       'Resend OTP',
+                      //       style:
+                      //           TextStyle(fontSize: 14, fontFamily: 'Poopins'),
+                      //     )),
                       const SizedBox(
                         height: 16,
                       ),
@@ -167,15 +167,19 @@ class _OTPPageState extends State<OTPPage> {
           ap.checkExistingUser().then((value) async {
             if (value != true) {
               try {
-                if(user!=null) {
-                  ap.setUser(user);
+                if (user != null) {
+                  await ap.setUser(user);
+                } else {
+                  showSnakBar(
+                      context, "Acount didn't extst, Please SignUp first.");
+                  return;
                 }
               } on FirebaseException catch (e) {
                 showSnakBar(context, e.message.toString());
                 return;
               }
+              ap.getUser();
               ap.setSignin().then((value) => true);
-
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(

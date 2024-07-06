@@ -142,8 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                                 
                                   sendPhoneNo();
                                 
-                                  showSnakBar(context,
-                                      "Please accept our Privacy policy and terms of use.");
+                                 
                                 
                               } else {
                                 // If any field is not filled up, show error messages

@@ -10,9 +10,12 @@ class HelpCenterPage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          leading: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.red.shade400,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.red.shade400,
+            ),
           ),
           centerTitle: true,
           title:

@@ -4,8 +4,8 @@ import 'package:the_homy/onboarding.dart/onboarding_view.dart';
 import 'package:the_homy/pages/homepage.dart';
 
 
-class AuthGate extends StatelessWidget {
-  const AuthGate({super.key});
+class AuthGates extends StatelessWidget {
+  const AuthGates({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,16 +1,17 @@
 import 'package:carousel_slider/carousel_slider.dart';
-
+import 'package:firebase_auth/firebase_auth.dart' as fireAuth;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:the_homy/component/reciepe_tile.dart';
 import 'package:the_homy/component/service_tile.dart';
 import 'package:the_homy/pages/all_recipe_page.dart';
 import 'package:the_homy/pages/navigation_menu.dart';
+import 'package:the_homy/pages/notification_page.dart';
+import 'package:the_homy/pages/qr_page.dart';
 import 'package:the_homy/provider/auth_provider.dart';
 import 'package:the_homy/provider/services_provider.dart';
 
@@ -88,7 +89,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer2<AuthProvider, ServiceProvider>(
-      builder: (context, authProvider, provider, child) {
+      builder: (context, authProviders, provider, child) {
         final serviceList = provider.serviceList;
         final state = provider.state;
 
@@ -101,11 +102,27 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
-                    const Icon(Icons.qr_code),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => QrPage(
+                                      UID: fireAuth.FirebaseAuth.instance
+                                          .currentUser!.uid)));
+                        },
+                        child: const Icon(Icons.qr_code)),
                     const SizedBox(
                       width: 12,
                     ),
-                    SvgPicture.asset('lib/assets/notification.svg'),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => NotificationPage()));
+                        },
+                        child: SvgPicture.asset('lib/assets/notification.svg')),
                   ],
                 ),
               ),
@@ -124,13 +141,15 @@ class _HomePageState extends State<HomePage> {
                     child: SizedBox(
                       height: 50,
                       width: 50,
-                      child: authProvider.avatar == null
-                          ? ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.asset('lib/assets/user_pic.png'))
+                      child: authProviders.avatar == null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset('lib/assets/user_pic.png'))
                           : ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                                'lib/assets/avatar${authProvider.avatar}.png'),
-                          ),
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                  'lib/assets/avatar${authProviders.avatar}.png'),
+                            ),
                     ),
                   ),
                   const SizedBox(
@@ -142,15 +161,18 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       const Text(
                         'welcome',
-                        style: TextStyle(fontSize: 10, fontFamily: 'Poppins',fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        authProvider.myUser!.userName ?? 'Guest',
+                        authProviders.myUser?.userName ?? 'Guest',
                         style: const TextStyle(
                             fontSize: 13, fontFamily: 'Poppins'),
                       ),
                       Text(
-                        authProvider.myUser!.address['city'] ?? 'Location',
+                        authProviders.myUser?.address['city'] ?? 'Location',
                         style: TextStyle(fontSize: 10, fontFamily: 'Poppins'),
                       ),
                     ],
@@ -292,19 +314,18 @@ class _HomePageState extends State<HomePage> {
 
                     SizedBox(
                       height: 1000,
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16,vertical: 15),
-                    child: RecipeTile());
-                },
-              ),
-            ),
-
-                    
+                      child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 15),
+                              child: RecipeTile());
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
